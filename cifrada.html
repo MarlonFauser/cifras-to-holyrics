@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formatar cifra holyrics</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+
+        body {
+            background-color: #f2f2f2;
+        }
+
+        #lyrics {
+            margin-bottom: 10px;
+        }
+
+        #calculateSpacesButton {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="column">
+            <h2>Cifra:</h2>
+            <textarea id="lyrics" style="width: 100%;" rows="10" cols="50" placeholder="Entre com a letra cifrada aqui">
+D
+A minha vida é do Mestre
+                    A
+Meu coração é do meu Mestre
+                Em
+O meu caminho é do Mestre
+G                        Bm    A   D
+    Minha esperança é meu Mestre
+
+                D
+A minha vida é do Mestre
+                    A
+Meu coração é do meu Mestre
+                Em
+O meu caminho é do Mestre
+G                        Bm    A   D
+    Minha esperança é meu Mestre
+
+[Primeira Parte]
+
+                A                  Em
+A Deus eu entreguei o barco do meu ser
+                Bm    A   D
+E entrei no mar afora
+                A
+Pra longe eu naveguei
+                Em
+Não vejo mais o cais
+            Bm   A  D
+Só Deus e eu agora
+
+[Refrão]
+
+                D
+A minha vida é do Mestre
+                    A
+Meu coração é do meu Mestre
+                Em
+O meu caminho é do Mestre
+G                        Bm    A   D
+    Minha esperança é meu Mestre
+
+[Segunda Parte]
+
+            A                 Em
+Na solidão da vida eu pude perceber
+                Bm    A        D
+O quanto Deus me ama (Deus me ama, ah)
+                A
+As ondas grandes vêm
+                Em
+Tentando me arrastar
+                Bm   A  D
+Pra longe da presença
+
+[Refrão Final]
+
+                D
+A minha vida é do Mestre
+                    A
+Meu coração é do meu Mestre
+                Em
+O meu caminho é do Mestre
+G                        Bm     A   D
+    Minha esperança é meu Mestre
+
+                D
+A minha vida é do Mestre
+                    A
+Meu coração é do meu Mestre
+                Em
+O meu caminho é do Mestre
+G                        Bm    A   D
+    Minha esperança é meu Mestre</textarea>
+        </div>
+    </div>
+
+    <div class="container" style="display: block;">
+        <div class="text-center">
+            <button id="calculateSpacesButton" class="btn btn-primary">Formatar e copiar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <h2>Antes:</h2>
+            <div id="before" style="white-space: pre-wrap;"></div>
+        </div>
+
+        <div class="column">
+            <h2>Depois:</h2>
+            <div id="after" style="white-space: pre-wrap;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <h2>Parâmetros:</h2>
+            <label for="spaceBetweenEachNoteParam">Espaço entre cada nota:</label>
+            <input type="number" id="spaceBetweenEachNoteParam" class="form-control" value="4">
+            <label for="spaceAtBeginningParam">Espaço no começo:</label>
+            <input type="number" id="spaceAtBeginningParam" class="form-control" value="6">
+        </div>
+    </div>
+
+    <script>
+        function espaco(lyrics, noteQtd) {
+            var spaceBetweenEachNote = Math.ceil(lyrics.length / noteQtd) - SPACE_BETWEEN_EACH_NOTE_PARAM;
+            var spaceAtBeginning = Math.floor(spaceBetweenEachNote / noteQtd) + SPACE_AT_BEGINNING_PARAM;
+            return {"spaceBetweenEachNote": spaceBetweenEachNote, "spaceAtBeginning": spaceAtBeginning};
+        }
+
+        function insertSpacesAtPosition(inputString, position, spacesToInsert) {
+            if (position < 0) {
+                position = 0;
+            }
+
+            if (position > inputString.length) {
+                position = inputString.length;
+            }
+
+            const leftPart = inputString.substring(0, position);
+            const rightPart = inputString.substring(position);
+
+            // Insert the desired number of spaces
+            const spaces = " ".repeat(spacesToInsert);
+
+            return leftPart + spaces + rightPart;
+        }
+
+        function isWhitespaceOrEmpty(inputString) {
+            return inputString.trim() === "";
+        }
+
+        document.getElementById('calculateSpacesButton').addEventListener('click', function () {
+            const lyrics = document.getElementById('lyrics').value;
+            const spaceBetweenEachNoteParam = parseInt(document.getElementById('spaceBetweenEachNoteParam').value);
+            const spaceAtBeginningParam = parseInt(document.getElementById('spaceAtBeginningParam').value);
+            SPACE_BETWEEN_EACH_NOTE_PARAM = spaceBetweenEachNoteParam;
+            SPACE_AT_BEGINNING_PARAM = spaceAtBeginningParam;
+
+            // Display "before" result
+            document.getElementById('before').textContent = lyrics;
+
+            var lines = lyrics.split('\n');
+            const result = [];
+
+            lines = lines.filter(line => !isWhitespaceOrEmpty(line) && line[0] != '[');
+            for (let i = 0; i < lines.length; i += 2) {
+                if (i + 1 < lines.length) {
+                    const noteLine = lines[i];
+                    const lyricsLine = lines[i + 1];
+
+                    const noteCount = noteLine.split(' ').filter(note => note.trim() !== '').length;
+
+                    const spaces = espaco(noteLine, noteCount);
+
+                    // Process each note line and add spaces and "//" at the beginning
+                    var modifiedNoteLine = '//'.padEnd(spaces.spaceAtBeginning, ' ') + noteLine
+                    const spaceTimes = Math.ceil(noteCount - 1)
+
+                    var insertedTimes = 0
+                    modifiedNoteChars = modifiedNoteLine.split('')
+                    for (let i = 0; i < modifiedNoteChars.length; i++) {
+                        const letter = modifiedNoteChars[i]
+                        const nextLetter = modifiedNoteChars[i+1]
+                        if (letter == ' ' || letter == '/') continue;
+                        if (nextLetter != ' ') continue;
+
+                        modifiedNoteLine = insertSpacesAtPosition(modifiedNoteLine, i+1, spaces.spaceBetweenEachNote)
+                        modifiedNoteChars = modifiedNoteLine.split('')
+                        insertedTimes++
+
+                        if (insertedTimes == spaceTimes) break;
+                    }
+
+                    result.push(modifiedNoteLine, lyricsLine);
+                }
+            }
+
+            if (result.length > 2) {
+                for(let i = 3; i <= result.length; i += 4) {
+                    result[i] += "\n"
+                }
+            }
+
+
+            const finalResult = result.join('\n');
+
+            try {
+                navigator.clipboard.writeText(finalResult);
+                console.log('Content copied to clipboard');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+
+            // Display the modified lyrics with preserved line breaks
+            document.getElementById('after').innerHTML = finalResult.replace(/\n/g, '<br/>')
+        });
+    </script>
+</body>
+</html>
