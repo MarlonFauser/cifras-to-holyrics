@@ -191,7 +191,7 @@ G                        Bm    A   D
 
                     // Process each note line and add spaces and "//" at the beginning
                     var modifiedNoteLine = '//'.padEnd(spaces.spaceAtBeginning, ' ') + noteLine
-                    const spaceTimes = Math.ceil(noteCount - 1)
+                    const spaceTimes = Math.ceil(noteCount - 1 || 1)
 
                     var insertedTimes = 0
                     modifiedNoteChars = modifiedNoteLine.split('')
@@ -212,11 +212,11 @@ G                        Bm    A   D
                 }
             }
 
-            if (result.length > 2) {
+            /*if (result.length > 2) {
                 for(let i = 3; i <= result.length; i += 4) {
                     result[i] += "\n"
                 }
-            }
+            }*/
 
 
             const finalResult = result.join('\n');
