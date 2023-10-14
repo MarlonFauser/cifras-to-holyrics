@@ -138,10 +138,21 @@ G                        Bm    A   D
     </div>
 
     <script>
-        function espaco(lyrics, noteQtd) {
-            var spaceBetweenEachNote = Math.ceil(lyrics.length / noteQtd) - SPACE_BETWEEN_EACH_NOTE_PARAM;
-            var spaceAtBeginning = Math.floor(spaceBetweenEachNote / noteQtd) + SPACE_AT_BEGINNING_PARAM;
-            return {"spaceBetweenEachNote": spaceBetweenEachNote, "spaceAtBeginning": spaceAtBeginning};
+        function espaco(noteLine, lyricsLine, noteCount) {
+            if (noteCount == 0) return 
+
+            var spaceBetweenEachNote = (Math.ceil(noteLine.length / noteCount) - SPACE_BETWEEN_EACH_NOTE_PARAM) || 1;
+            var spaceAtBeginning = (Math.floor(spaceBetweenEachNote / noteCount) + SPACE_AT_BEGINNING_PARAM) || 1;
+
+            if (noteCount == 1 && (lyricsLine.length - noteLine.length) > 20) {
+                spaceBetweenEachNote = 26
+                spaceAtBeginning = 3
+            }
+
+            if (spaceAtBeginning <= 0) spaceAtBeginning = 1
+            if (spaceBetweenEachNote <= 0) spaceBetweenEachNote = 1
+
+            return { "spaceAtBeginning": spaceAtBeginning, "spaceBetweenEachNote": spaceBetweenEachNote};
         }
 
         function insertSpacesAtPosition(inputString, position, spacesToInsert) {
@@ -187,7 +198,7 @@ G                        Bm    A   D
 
                     const noteCount = noteLine.split(' ').filter(note => note.trim() !== '').length;
 
-                    const spaces = espaco(noteLine, noteCount);
+                    const spaces = espaco(noteLine, lyricsLine, noteCount);
 
                     // Process each note line and add spaces and "//" at the beginning
                     var modifiedNoteLine = '//'.padEnd(spaces.spaceAtBeginning, ' ') + noteLine
@@ -199,7 +210,7 @@ G                        Bm    A   D
                         const letter = modifiedNoteChars[i]
                         const nextLetter = modifiedNoteChars[i+1]
                         if (letter == ' ' || letter == '/') continue;
-                        if (nextLetter != ' ') continue;
+                        if (nextLetter != ' ' && nextLetter != undefined) continue;
 
                         modifiedNoteLine = insertSpacesAtPosition(modifiedNoteLine, i+1, spaces.spaceBetweenEachNote)
                         modifiedNoteChars = modifiedNoteLine.split('')
